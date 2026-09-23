@@ -56,6 +56,7 @@ export class OrangeHrmApi {
         sortField: 'employee.firstName',
         sortOrder: 'ASC',
       },
+      timeout: 30_000,
     });
     expect(response.ok(), 'Employee search API should return a successful response').toBeTruthy();
 
