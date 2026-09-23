@@ -17,8 +17,8 @@ export default defineConfig({
     baseURL:
       process.env.BASE_URL ?? 'https://opensource-demo.orangehrmlive.com',
     headless: true,
-    actionTimeout: 15_000,
-    navigationTimeout: 30_000,
+    actionTimeout: 45_000,
+    navigationTimeout: 60_000,
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
     video: 'on',

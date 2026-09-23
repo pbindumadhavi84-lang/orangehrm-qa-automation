@@ -5,11 +5,37 @@ export class EmployeePage {
   constructor(private readonly page: Page) {}
 
   async openAddEmployee(): Promise<void> {
-    await this.page.getByRole('link', { name: 'PIM' }).click();
-    await this.page.getByRole('link', { name: 'Add Employee' }).click();
+     await Promise.all([
+    this.page.waitForURL(/\/pim\/viewEmployeeList/, {
+      waitUntil: 'domcontentloaded',
+    }),
+    this.page
+      .getByRole('link', { name: 'PIM', exact: true })
+      .click(),
+  ]);
+
+  const addEmployeeLink = this.page.getByRole('link', {
+    name: 'Add Employee',
+    exact: true,
+  });
+
+  await expect(
+    addEmployeeLink,
+    'Add Employee navigation link should be visible',
+  ).toBeVisible();
+
+  await Promise.all([
+    this.page.waitForURL(/\/pim\/addEmployee/, {
+      waitUntil: 'domcontentloaded',
+    }),
+    addEmployeeLink.click(),
+  ]);
     await expect(
-      this.page.getByRole('heading', { name: 'Add Employee' }),
-      'Add Employee form should be visible',
+    this.page.getByRole('heading', {
+      name: 'Add Employee',
+      exact: true,
+    }),
+    'Add Employee form should be visible',
     ).toBeVisible();
   }
 
@@ -30,7 +56,6 @@ export class EmployeePage {
       /\/pim\/viewPersonalDetails\/empNumber\/\d+/,
       {
         waitUntil: 'domcontentloaded',
-        timeout: 45_000,
       },
     );
 
@@ -40,7 +65,7 @@ export class EmployeePage {
         exact: true,
       }),
       'Personal Details should appear after employee creation',
-    ).toBeVisible({ timeout: 30_000 });
+    ).toBeVisible();
 
     const match = this.page.url().match(/empNumber\/(\d+)/);
     expect(match, 'Created employee number should be present in the URL').not.toBeNull();
@@ -48,8 +73,27 @@ export class EmployeePage {
   }
 
   async openEmployeeList(): Promise<void> {
-    await this.page.getByRole('link', { name: 'PIM' }).click();
-    await this.page.getByRole('link', { name: 'Employee List' }).click();
+     await Promise.all([
+    this.page.waitForURL(/\/pim\/viewEmployeeList/, {
+      waitUntil: 'domcontentloaded',
+    }),
+    this.page
+      .getByRole('link', { name: 'PIM', exact: true })
+      .click(),
+    ]);
+
+    const employeeListLink = this.page.getByRole('link', {name: 'Employee List',exact: true,});
+
+    await expect(employeeListLink,
+    'Employee List navigation link should be visible',
+    ).toBeVisible();
+
+     await Promise.all([
+    this.page.waitForURL(/\/pim\/viewEmployeeList/, {
+        waitUntil: 'domcontentloaded',
+    }), employeeListLink.click(),
+    ]);
+    //await this.page.getByRole('link', { name: 'Employee List' }).click();
     await expect(
       this.page.getByRole('heading', { name: 'Employee Information' }),
       'Employee Information search page should be visible',

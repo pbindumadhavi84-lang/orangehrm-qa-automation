@@ -14,12 +14,19 @@ export class LoginPage {
   async login(username: string, password: string): Promise<void> {
     await this.page.getByPlaceholder('Username').fill(username);
     await this.page.getByPlaceholder('Password').fill(password);
-    await this.page.getByRole('button', { name: 'Login' }).click();
+    //await this.page.getByRole('button', { name: 'Login' }).click();
+    await Promise.all([
+    this.page.waitForURL(/\/dashboard\/index/, {
+      timeout: 60_000,
+      waitUntil: 'domcontentloaded',
+    }),
+    this.page.getByRole('button', { name: 'Login' }).click(),
+  ]);
 
     await expect(
       this.page.getByRole('heading', { name: 'Dashboard' }),
       'Dashboard should be visible after login',
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 45_000 });
   }
 
   async logout(): Promise<void> {
